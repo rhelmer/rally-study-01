@@ -192,6 +192,17 @@
             return getContentsHavingSelector('meta[property="og:type"]', documentElement);
         }
 
+        function getCanonicalURL(documentElement) {
+            const elem = documentElement.querySelector('link[rel="canonical"]');
+            console.debug("ELEM", elem)
+            if (elem === null) return undefined;
+            return elem.href;
+        }
+
+        function getOGURL(documentElement) {
+            return getContentsHavingSelector('meta[property="og:url"]', documentElement);
+        }
+
         /**
          * 
          * @param {*} documentElement 
@@ -225,6 +236,13 @@
          * @param {string} eventTerminationReason the reason the event has ended
          */
         function sendAttentionData(timestamp, eventTerminationReason) {
+            // here are the URLs. Well, some of them.
+            console.debug(
+                getCanonicalURL(document), // <link rel="canonical" href="take this" />
+                getOGURL(document), // <meta property="og:url" contents="take this" />
+                new URL(PageManager.url).origin
+            );
+            
             PageManager.sendMessage({ 
                 type: "RS01.attentionCollection",
                 pageId: PageManager.pageId,
